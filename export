@@ -64,4 +64,33 @@ export const exportValuationToCSV = (processedData, filename = 'Valuation_Report
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
+
+// --- other utility functions above ---
+
+/**
+ * Escape CSV values (e.g., commas, quotes, newlines)
+ * @param {*} value - Value to escape
+ * @returns {string} Escaped value
+ */
+const escapeCSV = (value) => {
+    if (value === null || value === undefined) return '';
+    const stringValue = value.toString();
+    if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
+        return `"${stringValue.replace(/"/g, '""')}"`;
+    }
+    return stringValue;
 };
+
+/**
+ * Format number with commas and two decimal places
+ * @param {number} value - Value to format
+ * @returns {string} Formatted number string
+ */
+const formatNumber = (value) => {
+    if (value === null || value === undefined) return '-';
+    return Number(value).toLocaleString('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+};
+
