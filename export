@@ -1,0 +1,56 @@
+/**
+ * Export Valuation data to CSV format
+ * @param {Object} processedData - Data received from backend
+ * @param {string} filename - Optional filename
+ */
+export const exportValuationToCSV = (processedData, filename = 'Valuation_Report') => {
+    if (!processedData || Object.keys(processedData).length === 0) {
+        alert('No data available to export.');
+        return;
+    }
+
+    const rows = [];
+    const headers = ['Section', 'ISIN', 'FIMMDA Price', 'Market Price', 'Difference'];
+    rows.push(headers.join(','));
+
+    Object.entries(processedData).forEach(([category, items]) => {
+        let marketPriceLabel = '';
+
+        switch (category) {
+            case 'Central Govt Bonds':
+                marketPriceLabel = 'actualMarketPrice';
+                break;
+            case 'State Govt Bonds':
+                marketPriceLabel = 'sdlPrice';
+                break;
+            case 'Equity shares':
+                marketPriceLabel = 'nsePrice';
+                break;
+            default:
+                marketPriceLabel = 'actualMarketPrice'; // fallback
+        }
+
+        items.forEach(item => {
+            const row = [
+                escapeCSV(category),
+                escapeCSV(item.isin),
+                formatNumber(item.fimmdaPrice),
+                formatNumber(item[marketPriceLabel]),
+                formatNumber(item.difference)
+            ];
+            rows.push(row.join(','));
+        });
+    });
+
+    const csvContent = rows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = `${filename}_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+};
