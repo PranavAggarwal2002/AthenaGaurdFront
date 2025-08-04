@@ -1,0 +1,114 @@
+// Valuation/constants/pdr1Constants.js
+
+export const FILE_TYPES = {
+    FIMMDA_VAL: 'FIMMDA_VAL',
+    G_SEC: 'G_SEC',
+    STRIPS: 'STRIPS',
+    SDL: 'SDL',
+    NSE: 'NSE',
+    Treasury_Curve: 'Treasury_Curve',
+    CD_CURVE: 'CD_CURVE',
+    SLV : 'SLV '
+};
+
+export const FILE_DESCRIPTIONS = {
+    [FILE_TYPES.FIMMDA_VAL]: {
+        label: 'FIMMDA Valuation ',
+        description: 'Upload FIMMDA Valuation Excel/CSV file for compare market prices',
+        required: true,
+        acceptedFormats: '.xlsx, .xls, .csv'
+    },
+    [FILE_TYPES.G_SEC]: {
+        label: 'G Sec File',
+        description: 'Upload G Sec Excel/CSV file for compare market prices',
+        required: true,
+        acceptedFormats: '.xlsx, .xls, .csv'
+    },
+    [FILE_TYPES.STRIPS]: {
+        label: 'Strips File',
+        description: 'Upload Strips Excel/CSV file for compare market prices',
+        required: true,
+        acceptedFormats: '.xlsx, .xls, .csv'
+    },
+    [FILE_TYPES.SDL]: {
+        label: ' SDL File',
+        description: 'Upload SDL file for compare market prices',
+        required: false,
+        acceptedFormats: '.xlsx, .xls, .csv'
+    },
+    [FILE_TYPES.NSE]: {
+        label: 'NSE File',
+        description: 'Upload NSE file for compare market prices',
+        required: false,
+        acceptedFormats: '.xlsx, .xls, .csv'
+    },
+    [FILE_TYPES.Treasury_Curve]: {
+        label: 'Treasury Curve File',
+        description: 'Upload Treasury Curve File to find out the market yield',
+        required: false,
+        acceptedFormats: '.xlsx, .xls, .csv'
+    },
+    [FILE_TYPES.CD_CURVE]: {
+        label: 'Certificate of Deposite Curve File',
+        description: 'Upload Certificate of Deposite Curve File for security valuations',
+        required: false,
+        acceptedFormats: '.xlsx, .xls, .csv'
+    },
+    [FILE_TYPES.SLV]: {
+        label: 'SLV and Corporate Bond File',
+        description: 'Upload SLV and Corporate Bond File to compare maket price',
+        required: false,
+        acceptedFormats: '.xlsx, .xls, .csv'
+    }
+};
+
+// API Endpoints
+export const API_ENDPOINTS = {
+    UPLOAD_FILES: '/api/valuation/upload-files',
+    PROCESS_PDR1: '/api/pdr1/process',
+    GET_RESULTS: '/api/pdr1/results',
+    EXPORT_RESULTS: '/api/pdr1/export',
+   // GET_HISTORY: '/api/pdr1/history'
+};
+
+// PDR1 Report Sections Structure
+export const VALUATION_SECTIONS = [
+  {
+    id: "CentralGovtBond",
+    name: "Central Govt Bonds",
+  },
+  {
+    id: "StateGovtBond",
+    name: "State Govt Bonds",
+  },
+  {
+    id: "EquityShares",
+    name: "Equity Shares",
+  }
+];
+
+// valuation1Constants.js
+export const categoryToSectionId = {
+  "Central Govt Bonds": "CentralGovtBond",
+  "State Govt Bonds": "StateGovtBond",
+  "Equity shares": "EquityShares",
+};
+
+export const TAB_CONFIG = [
+    { id: 'upload', label: 'Upload Files', icon: 'FileText' },
+    { id: 'results', label: 'Results', icon: 'BarChart3' },
+];
+
+export const PROCESSING_STATUS = {
+    IDLE: 'idle',
+    UPLOADING: 'uploading',
+    PROCESSING: 'processing',
+    COMPLETED: 'completed',
+    ERROR: 'error'
+};
+
+export const EXPORT_FORMATS = {
+    CSV: 'csv',
+    EXCEL: 'xlsx',
+    PDF: 'pdf'
+};
