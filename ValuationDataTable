@@ -1,0 +1,71 @@
+import React from 'react';
+
+const ValuationDataTable = ({ mismatches }) => {
+  if (!mismatches || mismatches.length === 0) {
+    return <p>No mismatches found.</p>;
+  }
+
+  const getHeadersForCategory = (category) => {
+    switch (category) {
+      case 'Central Govt Bonds':
+        return ['ISIN', 'FIMMDA Price', 'Actual Market Price', 'Difference'];
+      case 'State Govt Bonds':
+        return ['ISIN', 'FIMMDA Price', 'SDL Price', 'Difference'];
+      case 'Equity shares':
+        return ['ISIN', 'FIMMDA Price', 'NSE Price', 'Difference'];
+      default:
+        return ['ISIN', 'FIMMDA Price', 'Market Price', 'Difference'];
+    }
+  };
+
+  const getRowForMismatch = (item) => {
+    const { ISIN, fimmdaPrice, actualMarketPrice, sdlPrice, NSEPrice, difference, diffrence, category } = item;
+    switch (category) {
+      case 'Central Govt Bonds':
+        return [ISIN, fimmdaPrice, actualMarketPrice, difference];
+      case 'State Govt Bonds':
+        return [ISIN, fimmdaPrice, sdlPrice, diffrence || difference];
+      case 'Equity shares':
+        return [ISIN, fimmdaPrice, NSEPrice, diffrence || difference];
+      default:
+        return [ISIN, fimmdaPrice, '-', '-'];
+    }
+  };
+
+  // Group mismatches by category
+  const grouped = mismatches.reduce((acc, item) => {
+    acc[item.category] = acc[item.category] || [];
+    acc[item.category].push(item);
+    return acc;
+  }, {});
+
+  return (
+    <div>
+      {Object.entries(grouped).map(([category, items]) => (
+        <div key={category} style={{ marginBottom: '2rem' }}>
+          <h3>{category}</h3>
+          <table border="1" cellPadding="5" style={{ borderCollapse: 'collapse', width: '100%' }}>
+            <thead>
+              <tr>
+                {getHeadersForCategory(category).map((header) => (
+                  <th key={header}>{header}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item, idx) => (
+                <tr key={idx}>
+                  {getRowForMismatch(item).map((cell, i) => (
+                    <td key={i}>{cell ?? '-'}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default ValuationDataTable;
