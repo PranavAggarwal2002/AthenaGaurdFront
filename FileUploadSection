@@ -1,0 +1,125 @@
+// pdr1/components/FileUploadSection.jsx
+
+import React from 'react';
+import { Database, Loader, RotateCcw } from 'lucide-react';
+import { FileUploadBox } from './FileUploadBox';
+import { FILE_TYPES, FILE_DESCRIPTIONS, PROCESSING_STATUS } from '../constants/valution1Constants';
+
+export const FileUploadSection = ({
+  uploadedFiles,
+  onFileUpload,
+  onFileRemove,
+  onProcess,
+  onReset,
+  isProcessing,
+  processingStatus
+}) => {
+  
+  const hasFimmda = uploadedFiles[FILE_TYPES.FIMMDA_VAL];
+  const hasNSE = uploadedFiles[FILE_TYPES.NSE];
+  const hasSDL = uploadedFiles[FILE_TYPES.SDL];
+  const hasGSEC = uploadedFiles[FILE_TYPES.GSEC];
+  const hasSTRIPS = uploadedFiles[FILE_TYPES.STRIPS];
+  const hasGsecAndStrips = hasGSEC && hasSTRIPS; // You need both GSEC and STRIPS together
+  const hasAtLeastOneCompanionFile = hasNSE || hasSDL || hasGsecAndStrips;
+  const hasRequiredFiles = hasFimmda && hasAtLeastOneCompanionFile;
+  const canProcess = hasRequiredFiles && !isProcessing;
+
+
+{!hasRequiredFiles && !isProcessing && (
+  <div className="text-sm text-red-600 font-medium">
+    Please upload the <strong>FIMMDA</strong> file and either:
+    <ul className="list-disc ml-6 mt-1">
+      <li>SDL file</li>
+      <li>NSE file</li>
+      <li>Both GSEC and STRIPS files</li>
+    </ul>
+  </div>
+)}
+
+  return (
+    <div className="space-y-6">
+      {/* File Upload Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">        {Object.entries(FILE_DESCRIPTIONS).map(([fileType, config]) => (
+          <FileUploadBox
+            key={fileType}
+            fileType={fileType}
+            label={config.label}
+            description={config.description}
+            required={config.required}
+            file={uploadedFiles[fileType]}
+            onUpload={(file) => onFileUpload(fileType, file)}
+            onRemove={() => onFileRemove(fileType)}
+            disabled={isProcessing}
+          />
+        ))}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex gap-4">
+        <button
+          onClick={onProcess}
+          disabled={!canProcess}
+          className={`flex-1 py-3.5 px-4 rounded-lg font-medium transition-all duration-200 transform ${
+            !canProcess
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]'
+          }`}
+        >
+          {isProcessing ? (
+            <span className="flex items-center justify-center gap-2">
+              <Loader className="h-5 w-5 animate-spin" />
+              Processing files...
+            </span>
+          ) : (
+            <span className="flex items-center justify-center gap-2">
+              <Database className="h-5 w-5" />
+              Process Valuation Files
+            </span>
+          )}
+        </button>
+
+        <button
+          onClick={onReset}
+          disabled={isProcessing || Object.keys(uploadedFiles).length === 0}
+          className={`px-6 py-3.5 rounded-lg font-medium transition-all duration-200 transform ${
+            isProcessing || Object.keys(uploadedFiles).length === 0
+              ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98]'
+          }`}
+        >
+          <span className="flex items-center justify-center gap-2">
+            <RotateCcw className="h-5 w-5" />
+            Reset
+          </span>
+        </button>
+      </div>
+
+      {/* Processing Status */}
+      {processingStatus === PROCESSING_STATUS.PROCESSING && (
+        <div className="mt-6">
+          <ProcessingProgress />
+        </div>
+      )}
+    </div>
+  );
+};
+
+const ProcessingProgress = () => {
+  return (
+    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+      <div className="flex items-center gap-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-200 border-t-blue-600"></div>
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800">Processing Files</h3>
+          <p className="text-sm text-gray-600 mt-1">
+            This may take a few moments depending on file size...
+          </p>
+        </div>
+      </div>
+      <div className="mt-4 w-full bg-blue-200 rounded-full h-2.5">
+        <div className="bg-blue-600 h-2.5 rounded-full animate-pulse" style={{ width: '70%' }}></div>
+      </div>
+    </div>
+  );
+};
